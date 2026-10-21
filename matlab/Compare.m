@@ -1,40 +1,72 @@
 %-- Log from MATLAB Model.
-
-Input_Vec = round(matlabInput.Data(1:800).*2^13);
-
-file_Input_Signal1 = fopen('C:\Users\Hasan\My_Projects\DSP\Trumpf_Project\matlab\input_Vec.txt','w');
-
+%read Matlab input and write it on a file
+Input_Vec = round(inputSignal.Data(1:3000).*2^13);
+file_Buf = fopen('C:\Users\Hasan\My_Projects\DSP\IQ_Demodulator\matlab\InputSignal_Vec.txt','w');
 for i = 1:length(Input_Vec)
-    fprintf(file_Input_Signal1,'%d\r\n',Input_Vec(i));
-end;
+    fprintf(file_Buf,'%d\r\n',Input_Vec(i));
+end
+fclose(file_Buf);
 
-fclose(file_Input_Signal1);
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-Output_Vec = round(matlabOutput.Data(1:800).*2^13);
 
-file_Input_Signal2 = fopen('C:\Users\Hasan\My_Projects\DSP\Trumpf_Project\matlab\output_Vec_Matlab.txt','w');
+Input_Vec = round(inputRefSignal.Data(1:3000).*2^13);
+file_Buf = fopen('C:\Users\Hasan\My_Projects\DSP\IQ_Demodulator\matlab\InputRefSignal_Vec.txt','w');
+for i = 1:length(Input_Vec)
+    fprintf(file_Buf,'%d\r\n',Input_Vec(i));
+end
+fclose(file_Buf);
 
-for i = 1:length(Output_Vec)
-    fprintf(file_Input_Signal2,'%d\r\n',Output_Vec(i));
-end;
 
-fclose(file_Input_Signal2);
+%read Matlab output Amplitude and write it on file
+Output_Vec1 = round(Amplitude.Data(1:3000).*2^13);
+file_Buf = fopen('C:\Users\Hasan\My_Projects\DSP\IQ_Demodulator\matlab\Matlab_Amplitude_Vec.txt','w');
+for i = 1:length(Output_Vec1)
+    fprintf(file_Buf,'%d\r\n',Output_Vec1(i));
+end
+fclose(file_Buf);
+
+
+%read Matlab output Phase Difference and write it on file
+Output_Vec2 = round(PhaseDifference.Data(1:3000).*2^11);
+file_Buf = fopen('C:\Users\Hasan\My_Projects\DSP\IQ_Demodulator\matlab\Matlab_PhaseDiff_Vec.txt','w');
+for i = 1:length(Output_Vec2)
+    fprintf(file_Buf,'%d\r\n',Output_Vec2(i));
+end
+fclose(file_Buf);
+
+
 
 %%
 
-%-- Log from MATLAB Model and VHDL simulation.
+%-- Plot Matlab and VHDL Amplitude
 
-file_Output_Signal_1 = fopen('C:\Users\Hasan\My_Projects\DSP\Trumpf_Project\matlab\output_Vec_Matlab.txt');
-Output_Vec_Sig = fscanf(file_Output_Signal_1 , '%d');
-fclose(file_Output_Signal_1);
+file_Buf = fopen('C:\Users\Hasan\My_Projects\DSP\IQ_Demodulator\matlab\Matlab_Amplitude_Vec.txt');
+Output_Vec_Sig = fscanf(file_Buf , '%d');
+fclose(file_Buf);
 
-file_Output_Signal_2 = fopen('C:\Users\Hasan\My_Projects\DSP\Trumpf_Project\matlab\Output_Vec_VHDL.txt');
-Output_Vec_Sig_HDL = fscanf(file_Output_Signal_2 , '%d');
-fclose(file_Output_Signal_2);
-
-
+file_Buf = fopen('C:\Users\Hasan\My_Projects\DSP\IQ_Demodulator\matlab\Vhdl_Amplitude_Vec.txt');
+Output_Vec_Sig_HDL = fscanf(file_Buf , '%d');
+fclose(file_Buf);
 
 plot(Output_Vec_Sig(1:800)./2^13)
 hold
 plot(Output_Vec_Sig_HDL(1:800)./2^13, 'ro')
 legend('MATLAB - Fixed-Point','VHDL - Fixed-Point')
+
+%%
+
+%-- Plot Matlab and VHDL Phase Difference
+
+file_Buf = fopen('C:\Users\Hasan\My_Projects\DSP\IQ_Demodulator\matlab\Matlab_PhaseDiff_Vec.txt');
+Output_Vec_Sig = fscanf(file_Buf , '%d');
+fclose(file_Buf);
+
+file_Buf = fopen('C:\Users\Hasan\My_Projects\DSP\IQ_Demodulator\matlab\Vhdl_PhaseDiff_Vec.txt');
+Output_Vec_Sig_HDL = fscanf(file_Buf , '%d');
+fclose(file_Buf);
+
+plot(Output_Vec_Sig(1:800)./2^11)
+hold
+plot(Output_Vec_Sig_HDL(1:800)./2^11, 'ro')
+legend('MATLAB - Fixed-Point','VHDL - Fixed-Point')
+
+
