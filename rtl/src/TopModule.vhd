@@ -79,7 +79,7 @@ END COMPONENT;
 constant number_1 : signed (13 downto 0) := to_signed(4295, 14); -- +1.048576 with 12 fractional bits (s.1.12)
 --signal input_buf : signed (13 downto 0) := (others =>'0');
 signal notReset : std_logic;
-signal amplitudeBuf : signed (44 downto 0) := (others =>'0');
+signal amplitudeBuf : signed (38 downto 0) := (others =>'0');
 signal DDS_output_data : std_logic_vector (31 downto 0) := (others =>'0');
 signal cos_DDS : signed (13 downto 0) := (others =>'0');
 signal sin_DDS : signed (13 downto 0) := (others =>'0');
@@ -241,7 +241,7 @@ else
     inputSignal_Buf <= signed(inputSignal);
     referenceSignal_Buf <= signed(referenceSignal);
     outputPhaseDiff <= std_logic_vector(phaseSignal(30 downto 17) - phaseRef(30 downto 17));
-    outputAmplitude <= std_logic_vector(amplitudeBuf(41 downto 28));
+    outputAmplitude <= std_logic_vector(amplitudeBuf(35 downto 22));
     mixer_signal_i <=  inputSignal_Buf     * cos_DDS;
     mixer_signal_q <=-(inputSignal_Buf     * sin_DDS); 
     mixer_ref_i    <=  referenceSignal_Buf * cos_DDS;
@@ -249,7 +249,7 @@ else
 
     if (cordic_sig_out_valid = '1') then
         phaseSignal     <= signed(cordic_sig_output(62 downto 32));
-        amplitudeBuf    <= signed(cordic_sig_output(30 downto 0)) * number_1;
+        amplitudeBuf    <= signed(cordic_sig_output(30 downto 6)) * number_1;
     end if;
 
     if (cordic_ref_out_valid = '1') then
