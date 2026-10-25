@@ -26,7 +26,7 @@ fclose(file_Buf);
 
 
 %read Matlab output Phase Difference and write it on file
-Output_Vec2 = round(PhaseDifference.Data(1:3000).*2^11);
+Output_Vec2 = round(PhaseDifference.Data(1:3000).*2^13);
 file_Buf = fopen('C:\Users\Hasan\My_Projects\DSP\IQ_Demodulator\matlab\Matlab_PhaseDiff_Vec.txt','w');
 for i = 1:length(Output_Vec2)
     fprintf(file_Buf,'%d\r\n',Output_Vec2(i));
@@ -64,7 +64,7 @@ file_Buf = fopen('C:\Users\Hasan\My_Projects\DSP\IQ_Demodulator\matlab\Vhdl_Phas
 Output_Vec_Sig_HDL = fscanf(file_Buf , '%d');
 fclose(file_Buf);
 
-plot(Output_Vec_Sig(1:800)./2^11)
+plot(Output_Vec_Sig(1:800)./2^13)
 hold
 plot(Output_Vec_Sig_HDL(1:800)./2^11, 'ro')
 legend('MATLAB - Fixed-Point','VHDL - Fixed-Point')
