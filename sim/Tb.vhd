@@ -16,8 +16,10 @@ ARCHITECTURE behavior OF Tb IS
     PORT(
            clock : in STD_LOGIC;
            reset : in STD_LOGIC;
-           Output : OUT  std_logic_vector(14 downto 0);
-           input : in std_logic_vector (13 downto 0)
+           inputSignal : in std_logic_vector (13 downto 0);
+           referenceSignal : in std_logic_vector (13 downto 0);
+           outputAmplitude : out std_logic_vector (13 downto 0);
+           outputPhaseDiff : out std_logic_vector (13 downto 0)
         );
     END COMPONENT;
     
@@ -36,8 +38,10 @@ ARCHITECTURE behavior OF Tb IS
    signal Clock : std_logic := '0';
    signal reset : std_logic := '0';
 --   signal input : std_logic_vector (15 downto 0) := (others => '0');
-   signal Input_Signal : signed(13 downto 0);
-   signal Output_Signal : signed(14 downto 0);
+   signal InputSignal : signed(13 downto 0);
+   signal referenceSignal : signed(13 downto 0);
+   signal outputAmplitude : signed(13 downto 0);
+   signal outputPhaseDiff : signed(13 downto 0);
 
 
    -- Clock period definitions
@@ -49,8 +53,10 @@ BEGIN
    uut: TopModule PORT MAP (
           Clock => Clock,
           reset => reset,
-          signed(Output) => Output_Signal,
-          input => std_logic_vector(Input_Signal)
+          referenceSignal => std_logic_vector(referenceSignal),
+          inputSignal => std_logic_vector(InputSignal),
+          signed(outputAmplitude) => outputAmplitude,
+          signed(outputPhaseDiff) => outputPhaseDiff
         );
 
 --DDS_Ins : DDS_Tb
@@ -91,10 +97,10 @@ BEGIN
 end process;		
 
 
-
-	Read_Input_Vector: process(Clock)
+--read Matlab input file
+	Read_Input_Signal: process(Clock)
 	
-		file		input_text	: text open read_mode is "C:\Users\Hasan\My_Projects\DSP\Trumpf_Project\matlab\input_Vec.txt";
+		file		input_text	: text open read_mode is "C:\Users\Hasan\My_Projects\DSP\IQ_Demodulator\matlab\InputSignal_Vec.txt";
 		variable LI1			: line;
 		variable LI1_var		: integer;
 		
@@ -104,23 +110,58 @@ end process;
 		
 			readline(input_text,LI1);
 			read(LI1,LI1_var);
-			Input_Signal				<= to_signed(LI1_var,14);
+			InputSignal				<= to_signed(LI1_var,14);
+			
+		end if;	
+	end process;
+
+--read Matlab input reference file
+	Read_Input_reference_Signal: process(Clock)
+	
+		file		input_text	: text open read_mode is "C:\Users\Hasan\My_Projects\DSP\IQ_Demodulator\matlab\InputRefSignal_Vec.txt";
+		variable LI1			: line;
+		variable LI1_var		: integer;
+		
+	begin
+	
+		if rising_edge(Clock) then
+		
+			readline(input_text,LI1);
+			read(LI1,LI1_var);
+			referenceSignal			<= to_signed(LI1_var,14);
 			
 		end if;	
 	end process;
 
 
-
-	write_Output_Vector: process(Clock)
+--write VHDL amplitude output file
+	write_outputAmplitude_Vector: process(Clock)
 	
-		file 		output_text	: text open write_mode is "C:\Users\Hasan\My_Projects\DSP\Trumpf_Project\matlab\Output_Vec_VHDL.txt";
+		file 		output_text	: text open write_mode is "C:\Users\Hasan\My_Projects\DSP\IQ_Demodulator\matlab\VHDL_Amplitude_Vec.txt";
 		variable LO1			: line;
 		
 	begin
 	
 		if rising_edge(Clock) then
 		
-			write(LO1, to_integer(Output_Signal));
+			write(LO1, to_integer(outputAmplitude));
+			writeline(output_text , LO1);
+			
+		end if;
+	end process;
+	
+	
+--write VHDL Phasediff output file
+    write_outputPhaseDiff_Vector: process(Clock)
+	
+		file 		output_text	: text open write_mode is "C:\Users\Hasan\My_Projects\DSP\IQ_Demodulator\matlab\VHDL_PhaseDiff_Vec.txt";
+		variable LO1			: line;
+		
+	begin
+	
+		if rising_edge(Clock) then
+		
+			write(LO1, to_integer(outputPhaseDiff));
 			writeline(output_text , LO1);
 			
 		end if;
